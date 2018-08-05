@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEventHandler } from 'react';
 
 interface IProps extends React.ClassAttributes<UnitCircle> {
     coeffA: number[];
@@ -6,37 +6,60 @@ interface IProps extends React.ClassAttributes<UnitCircle> {
 }
 
 interface IState {
-    coords: { x: number; y: number };
+    poles: Coordinate[];
+    zeros: Coordinate[];
 }
+
+type Coordinate = { x: number; y: number };
 
 export default class UnitCircle extends React.PureComponent<IProps, IState> {
     private svg?: SVGSVGElement;
+    private onMouseUpListener?: EventListener;
+    private onMouseMoveListener?: EventListener;
 
     state = {
-        coords: { x: 0, y: 0 }
+        poles: [{ x: 0, y: 0 }],
+        zeros: [] as Coordinate[]
     };
 
     constructor(props: IProps) {
         super(props);
     }
 
-    onMouseDown = (e: React.MouseEvent<SVGElement>) => {
+    onDoubleClick = (e: React.MouseEvent<SVGElement>) => {
+        const origin = this.svg.createSVGPoint();
+
+        origin.x = e.clientX;
+        origin.y = e.clientY;
+
+        this.setState({
+            poles: [
+                ...this.state.poles,
+                origin.matrixTransform(this.svg.getScreenCTM().inverse())
+            ]
+        });
+    };
+
+    onMouseDown = (idx: number) => (e: React.MouseEvent<SVGElement>) => {
         e.preventDefault();
         e.stopPropagation();
 
-        window.addEventListener('mousemove', this.onMouseMove);
-        window.addEventListener('mouseup', this.onMouseUp);
+        this.onMouseMoveListener = this.onMouseMove(idx);
+        this.onMouseUpListener = this.onMouseUp(idx);
+
+        window.addEventListener('mousemove', this.onMouseMoveListener);
+        window.addEventListener('mouseup', this.onMouseUpListener);
     };
 
-    onMouseUp = (e: MouseEvent) => {
+    onMouseUp = (idx: number) => (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
-        window.removeEventListener('mousemove', this.onMouseMove);
-        window.removeEventListener('mouseup', this.onMouseUp);
+        window.removeEventListener('mousemove', this.onMouseMoveListener);
+        window.removeEventListener('mouseup', this.onMouseUpListener);
     };
 
-    onMouseMove = (e: MouseEvent) => {
+    onMouseMove = (idx: number) => (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -45,17 +68,24 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         origin.x = e.clientX;
         origin.y = e.clientY;
 
+        const poles = [...this.state.poles];
+        poles[idx] = origin.matrixTransform(this.svg.getScreenCTM().inverse());
+
         this.setState({
-            coords: origin.matrixTransform(this.svg.getScreenCTM().inverse())
+            poles
         });
     };
 
     render() {
-        const { coords } = this.state;
+        const { poles, zeros } = this.state;
 
         return (
             <div className="panel">
-                <svg ref={el => (this.svg = el)} viewBox="-100 -100 200 200">
+                <svg
+                    ref={el => (this.svg = el)}
+                    viewBox="-100 -100 200 200"
+                    onDoubleClick={this.onDoubleClick}
+                >
                     <line
                         y1={-100}
                         y2={100}
@@ -80,15 +110,20 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                         strokeWidth={2}
                         fill="none"
                     />
-                    <circle
-                        r={5}
-                        cx={coords.x}
-                        cy={coords.y}
-                        stroke="black"
-                        strokeWidth={1}
-                        fill="white"
-                        onMouseDown={this.onMouseDown}
-                    />
+                    <g>
+                        {poles.map((c: Coordinate, idx) => (
+                            <circle
+                                key={idx}
+                                r={5}
+                                cx={c.x}
+                                cy={c.y}
+                                stroke="black"
+                                strokeWidth={1}
+                                fill="white"
+                                onMouseDown={this.onMouseDown(idx)}
+                            />
+                        ))}
+                    </g>
                 </svg>
             </div>
         );
