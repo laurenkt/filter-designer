@@ -75,11 +75,13 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         });
     };
 
-    onMouseDown = (idx: number) => (e: React.MouseEvent<SVGElement>) => {
+    onMouseDown = (idx: number, isPole = true) => (
+        e: React.MouseEvent<SVGElement>
+    ) => {
         e.preventDefault();
         e.stopPropagation();
 
-        this.onMouseMoveListener = this.onMouseMove(idx);
+        this.onMouseMoveListener = this.onMouseMove(idx, isPole);
         this.onMouseUpListener = this.onMouseUp(idx);
 
         window.addEventListener('mousemove', this.onMouseMoveListener);
@@ -94,7 +96,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         window.removeEventListener('mouseup', this.onMouseUpListener);
     };
 
-    onMouseMove = (idx: number) => (e: MouseEvent) => {
+    onMouseMove = (idx: number, isPole: boolean) => (e: MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
 
@@ -103,12 +105,25 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         origin.x = e.clientX;
         origin.y = e.clientY;
 
-        const poles = [...this.state.poles];
-        poles[idx] = origin.matrixTransform(this.svg.getScreenCTM().inverse());
+        if (isPole) {
+            const poles = [...this.state.poles];
+            poles[idx] = origin.matrixTransform(
+                this.svg.getScreenCTM().inverse()
+            );
 
-        this.setState({
-            poles
-        });
+            this.setState({
+                poles
+            });
+        } else {
+            const zeros = [...this.state.zeros];
+            zeros[idx] = origin.matrixTransform(
+                this.svg.getScreenCTM().inverse()
+            );
+
+            this.setState({
+                zeros
+            });
+        }
     };
 
     render() {
@@ -155,7 +170,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                                 stroke="black"
                                 strokeWidth={1}
                                 fill="white"
-                                onMouseDown={this.onMouseDown(idx)}
+                                onMouseDown={this.onMouseDown(idx, false)}
                             />
                         ))}
                         {poles.map((c: Coordinate, idx) => (
@@ -167,7 +182,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                                 stroke="black"
                                 strokeWidth={1}
                                 fill="white"
-                                onMouseDown={this.onMouseDown(idx)}
+                                onMouseDown={this.onMouseDown(idx, true)}
                             />
                         ))}
                     </g>
