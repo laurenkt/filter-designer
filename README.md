@@ -1,14 +1,4 @@
-# Bouzouki
-
-Usage
-=====
-
-Run/open `dist/index.html` in a modern and recently updated web-browser (Chrome, Safari, Firefox) to see the integrated report/synthesiser.
-
-To compile from source, see instructions below.
-
-Development
-===========
+# Filter Designer
 
 `npm install` to install dependencies
 
