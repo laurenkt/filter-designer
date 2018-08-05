@@ -12,6 +12,41 @@ interface IState {
 
 type Coordinate = { x: number; y: number };
 
+class Cross extends React.PureComponent<{
+    cx: number;
+    cy: number;
+    r: number;
+    [key: string]: any;
+}> {
+    render() {
+        const { cx, cy, r, ...props } = this.props;
+
+        // scale r
+        const rs = (r * 1) / Math.sqrt(2);
+
+        return (
+            <g>
+                <line
+                    x1={cx + rs}
+                    x2={cx - rs}
+                    y1={cy - rs}
+                    y2={cy + rs}
+                    {...props}
+                    strokeWidth={2}
+                />
+                <line
+                    x1={cx - rs}
+                    x2={cx + rs}
+                    y1={cy - rs}
+                    y2={cy + rs}
+                    {...props}
+                    strokeWidth={2}
+                />
+            </g>
+        );
+    }
+}
+
 export default class UnitCircle extends React.PureComponent<IProps, IState> {
     private svg?: SVGSVGElement;
     private onMouseUpListener?: EventListener;
@@ -19,7 +54,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
 
     state = {
         poles: [{ x: 0, y: 0 }],
-        zeros: [] as Coordinate[]
+        zeros: [{ x: 0, y: 20 }]
     };
 
     constructor(props: IProps) {
@@ -111,6 +146,18 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                         fill="none"
                     />
                     <g>
+                        {zeros.map((c: Coordinate, idx) => (
+                            <Cross
+                                key={idx}
+                                r={5}
+                                cx={c.x}
+                                cy={c.y}
+                                stroke="black"
+                                strokeWidth={1}
+                                fill="white"
+                                onMouseDown={this.onMouseDown(idx)}
+                            />
+                        ))}
                         {poles.map((c: Coordinate, idx) => (
                             <circle
                                 key={idx}
