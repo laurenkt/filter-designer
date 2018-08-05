@@ -34,7 +34,7 @@ class App extends React.Component {
                         ]}
                     >
                         <div className="panel">Something</div>
-                        <UnitCircle />
+                        <UnitCircle coeffA={coeffA} coeffB={coeffB} />
                     </PanelGroup>
                     <PanelGroup
                         direction="column"

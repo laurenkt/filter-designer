@@ -5,17 +5,14 @@ import AceEditor from 'react-ace';
 import 'brace/mode/java';
 import 'brace/theme/github';
 
-interface IDifferenceEquationsProps
-    extends React.ClassAttributes<DifferenceEquations> {
+interface IProps extends React.ClassAttributes<DifferenceEquations> {
     coeffA: number[];
     coeffB: number[];
 }
 
 type Coefficients = number[];
 
-export default class DifferenceEquations extends React.PureComponent<
-    IDifferenceEquationsProps
-> {
+export default class DifferenceEquations extends React.PureComponent<IProps> {
     render() {
         const { coeffA, coeffB } = this.props;
 
