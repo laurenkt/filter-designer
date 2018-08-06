@@ -61,21 +61,43 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         super(props);
     }
 
-    onDoubleClick = (e: React.MouseEvent<SVGElement>) => {
+    onDoubleClick = (idx?: number, isPole = true) => (
+        e: React.MouseEvent<SVGElement>
+    ) => {
+        e.preventDefault();
+        e.stopPropagation();
+
         const origin = this.svg.createSVGPoint();
 
         origin.x = e.clientX;
         origin.y = e.clientY;
 
-        this.setState({
-            poles: [
-                ...this.state.poles,
-                origin.matrixTransform(this.svg.getScreenCTM().inverse())
-            ]
-        });
+        if (idx === undefined) {
+            this.setState({
+                poles: [
+                    ...this.state.poles,
+                    origin.matrixTransform(this.svg.getScreenCTM().inverse())
+                ]
+            });
+        } else {
+            if (isPole) {
+                const poles = [
+                    ...this.state.poles.slice(0, idx),
+                    ...this.state.poles.slice(idx + 1)
+                ];
+                const zeros = [...this.state.zeros, this.state.poles[idx]];
+                this.setState({ poles, zeros });
+            } else {
+                const zeros = [
+                    ...this.state.zeros.slice(0, idx),
+                    ...this.state.zeros.slice(idx + 1)
+                ];
+                this.setState({ zeros });
+            }
+        }
     };
 
-    onMouseDown = (idx: number, isPole = true) => (
+    onMouseDown = (idx: number, isPole: boolean) => (
         e: React.MouseEvent<SVGElement>
     ) => {
         e.preventDefault();
@@ -134,7 +156,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                 <svg
                     ref={el => (this.svg = el)}
                     viewBox="-100 -100 200 200"
-                    onDoubleClick={this.onDoubleClick}
+                    onDoubleClick={this.onDoubleClick(undefined)}
                 >
                     <line
                         y1={-100}
@@ -170,6 +192,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                                 stroke="black"
                                 strokeWidth={1}
                                 fill="white"
+                                onDoubleClick={this.onDoubleClick(idx, false)}
                                 onMouseDown={this.onMouseDown(idx, false)}
                             />
                         ))}
@@ -182,6 +205,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                                 stroke="black"
                                 strokeWidth={1}
                                 fill="white"
+                                onDoubleClick={this.onDoubleClick(idx, true)}
                                 onMouseDown={this.onMouseDown(idx, true)}
                             />
                         ))}
