@@ -1,28 +1,30 @@
-import React, { MouseEventHandler } from 'react';
+import React, { MouseEventHandler } from "react"
+import { ContextReplacementPlugin } from "webpack"
 
 interface IProps extends React.ClassAttributes<UnitCircle> {
-    coeffA: number[];
-    coeffB: number[];
+    coeffA: number[]
+    coeffB: number[]
+    onChangeCoeffs: (coeffA: number[], coeffB: number[]) => void
 }
 
 interface IState {
-    poles: Coordinate[];
-    zeros: Coordinate[];
+    poles: Coordinate[]
+    zeros: Coordinate[]
 }
 
-type Coordinate = { x: number; y: number };
+type Coordinate = { x: number; y: number }
 
 class Cross extends React.PureComponent<{
-    cx: number;
-    cy: number;
-    r: number;
-    [key: string]: any;
+    cx: number
+    cy: number
+    r: number
+    [key: string]: any
 }> {
     render() {
-        const { cx, cy, r, ...props } = this.props;
+        const { cx, cy, r, ...props } = this.props
 
         // scale r
-        const rs = (r * 1) / Math.sqrt(2);
+        const rs = (r * 1) / Math.sqrt(2)
 
         return (
             <g>
@@ -43,113 +45,118 @@ class Cross extends React.PureComponent<{
                     strokeWidth={2}
                 />
             </g>
-        );
+        )
     }
 }
 
 export default class UnitCircle extends React.PureComponent<IProps, IState> {
-    private svg?: SVGSVGElement;
-    private onMouseUpListener?: EventListener;
-    private onMouseMoveListener?: EventListener;
+    private svg?: SVGSVGElement
+    private onMouseUpListener?: EventListener
+    private onMouseMoveListener?: EventListener
 
     state = {
         poles: [{ x: 0, y: 0 }],
-        zeros: [{ x: 0, y: 20 }]
-    };
+        zeros: [{ x: 0, y: 20 }],
+    }
 
     constructor(props: IProps) {
-        super(props);
+        super(props)
     }
 
     onDoubleClick = (idx?: number, isPole = true) => (
         e: React.MouseEvent<SVGElement>
     ) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
+        e.stopPropagation()
 
-        const origin = this.svg.createSVGPoint();
+        const origin = this.svg.createSVGPoint()
 
-        origin.x = e.clientX;
-        origin.y = e.clientY;
+        origin.x = e.clientX
+        origin.y = e.clientY
 
         if (idx === undefined) {
             this.setState({
                 poles: [
                     ...this.state.poles,
-                    origin.matrixTransform(this.svg.getScreenCTM().inverse())
-                ]
-            });
+                    origin.matrixTransform(this.svg.getScreenCTM().inverse()),
+                ],
+            })
         } else {
             if (isPole) {
                 const poles = [
                     ...this.state.poles.slice(0, idx),
-                    ...this.state.poles.slice(idx + 1)
-                ];
-                const zeros = [...this.state.zeros, this.state.poles[idx]];
-                this.setState({ poles, zeros });
+                    ...this.state.poles.slice(idx + 1),
+                ]
+                const zeros = [...this.state.zeros, this.state.poles[idx]]
+                this.setState({ poles, zeros })
             } else {
                 const zeros = [
                     ...this.state.zeros.slice(0, idx),
-                    ...this.state.zeros.slice(idx + 1)
-                ];
-                this.setState({ zeros });
+                    ...this.state.zeros.slice(idx + 1),
+                ]
+                this.setState({ zeros })
             }
         }
-    };
+    }
 
     onMouseDown = (idx: number, isPole: boolean) => (
         e: React.MouseEvent<SVGElement>
     ) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
+        e.stopPropagation()
 
-        this.onMouseMoveListener = this.onMouseMove(idx, isPole);
-        this.onMouseUpListener = this.onMouseUp(idx);
+        this.onMouseMoveListener = this.onMouseMove(idx, isPole)
+        this.onMouseUpListener = this.onMouseUp(idx)
 
-        window.addEventListener('mousemove', this.onMouseMoveListener);
-        window.addEventListener('mouseup', this.onMouseUpListener);
-    };
+        window.addEventListener("mousemove", this.onMouseMoveListener)
+        window.addEventListener("mouseup", this.onMouseUpListener)
+    }
 
     onMouseUp = (idx: number) => (e: MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
+        e.stopPropagation()
 
-        window.removeEventListener('mousemove', this.onMouseMoveListener);
-        window.removeEventListener('mouseup', this.onMouseUpListener);
-    };
+        window.removeEventListener("mousemove", this.onMouseMoveListener)
+        window.removeEventListener("mouseup", this.onMouseUpListener)
+
+        this.props.onChangeCoeffs(
+            [Math.random(), Math.random()],
+            [Math.random(), Math.random()]
+        )
+    }
 
     onMouseMove = (idx: number, isPole: boolean) => (e: MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
+        e.preventDefault()
+        e.stopPropagation()
 
-        const origin = this.svg.createSVGPoint();
+        const origin = this.svg.createSVGPoint()
 
-        origin.x = e.clientX;
-        origin.y = e.clientY;
+        origin.x = e.clientX
+        origin.y = e.clientY
 
         if (isPole) {
-            const poles = [...this.state.poles];
+            const poles = [...this.state.poles]
             poles[idx] = origin.matrixTransform(
                 this.svg.getScreenCTM().inverse()
-            );
+            )
 
             this.setState({
-                poles
-            });
+                poles,
+            })
         } else {
-            const zeros = [...this.state.zeros];
+            const zeros = [...this.state.zeros]
             zeros[idx] = origin.matrixTransform(
                 this.svg.getScreenCTM().inverse()
-            );
+            )
 
             this.setState({
-                zeros
-            });
+                zeros,
+            })
         }
-    };
+    }
 
     render() {
-        const { poles, zeros } = this.state;
+        const { poles, zeros } = this.state
 
         return (
             <div className="panel">
@@ -212,6 +219,6 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                     </g>
                 </svg>
             </div>
-        );
+        )
     }
 }
