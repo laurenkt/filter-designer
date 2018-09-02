@@ -4,6 +4,8 @@ import { ContextReplacementPlugin } from "webpack"
 interface IProps extends React.ClassAttributes<UnitCircle> {
     coeffA: number[]
     coeffB: number[]
+    width: number
+    height: number
     onChangeCoeffs: (coeffA: number[], coeffB: number[]) => void
 }
 
@@ -50,7 +52,7 @@ class Cross extends React.PureComponent<{
 }
 
 export default class UnitCircle extends React.PureComponent<IProps, IState> {
-    private svg?: SVGSVGElement
+    private svg: SVGSVGElement
     private onMouseUpListener?: EventListener
     private onMouseMoveListener?: EventListener
 
@@ -78,7 +80,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
             this.setState({
                 poles: [
                     ...this.state.poles,
-                    origin.matrixTransform(this.svg.getScreenCTM().inverse()),
+                    origin.matrixTransform(this.svg.getScreenCTM()!.inverse()),
                 ],
             })
         } else {
@@ -116,8 +118,8 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         e.preventDefault()
         e.stopPropagation()
 
-        window.removeEventListener("mousemove", this.onMouseMoveListener)
-        window.removeEventListener("mouseup", this.onMouseUpListener)
+        window.removeEventListener("mousemove", this.onMouseMoveListener!)
+        window.removeEventListener("mouseup", this.onMouseUpListener!)
 
         this.props.onChangeCoeffs(
             [Math.random(), Math.random()],
@@ -137,7 +139,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         if (isPole) {
             const poles = [...this.state.poles]
             poles[idx] = origin.matrixTransform(
-                this.svg.getScreenCTM().inverse()
+                this.svg.getScreenCTM()!.inverse()
             )
 
             this.setState({
@@ -146,7 +148,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         } else {
             const zeros = [...this.state.zeros]
             zeros[idx] = origin.matrixTransform(
-                this.svg.getScreenCTM().inverse()
+                this.svg.getScreenCTM()!.inverse()
             )
 
             this.setState({
@@ -157,68 +159,69 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
 
     render() {
         const { poles, zeros } = this.state
+        const { width, height } = this.props
 
         return (
-            <div className="panel">
-                <svg
-                    ref={el => (this.svg = el)}
-                    viewBox="-100 -100 200 200"
-                    onDoubleClick={this.onDoubleClick(undefined)}
-                >
-                    <line
-                        y1={-100}
-                        y2={100}
-                        x1={0}
-                        x2={0}
-                        stroke="black"
-                        strokeWidth={1}
-                    />
-                    <line
-                        y1={0}
-                        y2={0}
-                        x1={-100}
-                        x2={100}
-                        stroke="black"
-                        strokeWidth={1}
-                    />
-                    <circle
-                        r={50}
-                        cx={0}
-                        cy={0}
-                        stroke="black"
-                        strokeWidth={2}
-                        fill="none"
-                    />
-                    <g>
-                        {zeros.map((c: Coordinate, idx) => (
-                            <Cross
-                                key={idx}
-                                r={5}
-                                cx={c.x}
-                                cy={c.y}
-                                stroke="black"
-                                strokeWidth={1}
-                                fill="white"
-                                onDoubleClick={this.onDoubleClick(idx, false)}
-                                onMouseDown={this.onMouseDown(idx, false)}
-                            />
-                        ))}
-                        {poles.map((c: Coordinate, idx) => (
-                            <circle
-                                key={idx}
-                                r={5}
-                                cx={c.x}
-                                cy={c.y}
-                                stroke="black"
-                                strokeWidth={1}
-                                fill="white"
-                                onDoubleClick={this.onDoubleClick(idx, true)}
-                                onMouseDown={this.onMouseDown(idx, true)}
-                            />
-                        ))}
-                    </g>
-                </svg>
-            </div>
+            <svg
+                width={width}
+                height={height}
+                ref={el => (this.svg = el!)}
+                viewBox={`-100 -100 200 200`}
+                onDoubleClick={this.onDoubleClick(undefined)}
+            >
+                <line
+                    y1={-1000}
+                    y2={1000}
+                    x1={0}
+                    x2={0}
+                    stroke="black"
+                    strokeWidth={1}
+                />
+                <line
+                    y1={0}
+                    y2={0}
+                    x1={-1000}
+                    x2={1000}
+                    stroke="black"
+                    strokeWidth={1}
+                />
+                <circle
+                    r={50}
+                    cx={0}
+                    cy={0}
+                    stroke="black"
+                    strokeWidth={2}
+                    fill="none"
+                />
+                <g>
+                    {zeros.map((c: Coordinate, idx) => (
+                        <Cross
+                            key={idx}
+                            r={5}
+                            cx={c.x}
+                            cy={c.y}
+                            stroke="black"
+                            strokeWidth={1}
+                            fill="white"
+                            onDoubleClick={this.onDoubleClick(idx, false)}
+                            onMouseDown={this.onMouseDown(idx, false)}
+                        />
+                    ))}
+                    {poles.map((c: Coordinate, idx) => (
+                        <circle
+                            key={idx}
+                            r={5}
+                            cx={c.x}
+                            cy={c.y}
+                            stroke="black"
+                            strokeWidth={1}
+                            fill="white"
+                            onDoubleClick={this.onDoubleClick(idx, true)}
+                            onMouseDown={this.onMouseDown(idx, true)}
+                        />
+                    ))}
+                </g>
+            </svg>
         )
     }
 }

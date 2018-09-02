@@ -3,8 +3,7 @@ import { render } from "react-dom"
 import UnitCircle from "./components/UnitCircle"
 import DifferenceEquations from "./components/DifferenceEquations"
 import Response from "./components/Response"
-// @ts-ignore no typedefs
-import PanelGroup from "react-panelgroup"
+import Resizer from "./components/Resizer"
 import "./style.scss"
 
 const $ = (selector: string) => document.querySelector(selector)
@@ -18,6 +17,11 @@ let isAudioWorkletInBaseAudioContext = () => {
         context.audioWorklet &&
         typeof context.audioWorklet.addModule === "function"
     )
+}
+
+interface Coefficients {
+    A: number[]
+    B: number[]
 }
 
 class App extends React.Component {
@@ -37,43 +41,36 @@ class App extends React.Component {
 
         return (
             <div className="fill">
-                <PanelGroup
-                    direction="row"
-                    panelWidths={[
-                        { size: 1, resize: "stretch" },
-                        { size: 1, resize: "stretch" },
-                    ]}
-                >
-                    <PanelGroup
-                        direction="column"
-                        panelWidths={[
-                            { size: 1, resize: "stretch" },
-                            { size: 1, resize: "stretch" },
-                        ]}
-                    >
-                        <div className="panel">
-                            {this.audioWorkletAvailable &&
-                                "No AudioWorkletProcessor"}
-                        </div>
-                        <UnitCircle
-                            coeffA={coeffA}
-                            coeffB={coeffB}
-                            onChangeCoeffs={this.onChangeCoeffs}
-                        />
-                    </PanelGroup>
-                    <PanelGroup
-                        direction="column"
-                        panelWidths={[
-                            { size: 1, resize: "stretch" },
-                            { size: 1, resize: "stretch" },
-                        ]}
-                    >
-                        <div className="panel">
-                            <Response coeffA={coeffA} coeffB={coeffB} />
-                        </div>
-                        <DifferenceEquations coeffA={coeffA} coeffB={coeffB} />
-                    </PanelGroup>
-                </PanelGroup>
+                <div className="row">
+                    <div className="panel">
+                        {this.audioWorkletAvailable &&
+                            "No AudioWorkletProcessor"}
+                    </div>
+                    <Resizer className="panel">
+                        {(width, height) => (
+                            <UnitCircle
+                                width={width}
+                                height={height}
+                                coeffA={coeffA}
+                                coeffB={coeffB}
+                                onChangeCoeffs={this.onChangeCoeffs}
+                            />
+                        )}
+                    </Resizer>
+                </div>
+                <div className="row">
+                    <Resizer className="panel">
+                        {(width, height) => (
+                            <Response
+                                width={width}
+                                height={height}
+                                coeffA={coeffA}
+                                coeffB={coeffB}
+                            />
+                        )}
+                    </Resizer>
+                    <DifferenceEquations coeffA={coeffA} coeffB={coeffB} />
+                </div>
             </div>
         )
     }
@@ -82,5 +79,5 @@ class App extends React.Component {
 document.addEventListener("DOMContentLoaded", _ => {
     const root = document.createElement("main")
     render(<App />, root)
-    $("body").appendChild(root)
+    $("body")!.appendChild(root)
 })

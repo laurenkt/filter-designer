@@ -1,28 +1,26 @@
 import React from "react"
 
-interface IProps {
+interface Props {
+    width: number
+    height: number
     coeffA: number[]
     coeffB: number[]
 }
 
-export default class extends React.PureComponent<IProps> {
+export default class extends React.PureComponent<Props> {
     private ctx: CanvasRenderingContext2D
     private canvas: HTMLCanvasElement
 
     setContext = (canvas: HTMLCanvasElement) => {
         this.canvas = canvas
-        const ctx = (this.ctx = canvas.getContext("2d"))
-    }
-
-    UNSAFE_componentWillReceiveProps(nextProps: IProps) {
-        console.log(nextProps)
+        const ctx = (this.ctx = canvas.getContext("2d")!)
     }
 
     redraw = () => {
         if (this.ctx) {
             const ctx = this.ctx
 
-            const { width, height } = this.canvas.getBoundingClientRect()
+            const { width, height } = this.props
 
             ctx.imageSmoothingEnabled = false
             ctx.strokeStyle = "black"
@@ -38,11 +36,11 @@ export default class extends React.PureComponent<IProps> {
             for (let x = 0; x < width; x++) {
                 ctx.lineTo(
                     x,
-                    height / 2 +
-                        (Math.random() - 0.5) *
-                            Math.random() *
-                            Math.random() *
-                            (height / 4)
+                    //height / 2 +
+                    (Math.random() - 0.5) *
+                        Math.random() *
+                        Math.random() *
+                        (height / 4)
                 )
             }
             ctx.stroke()
@@ -50,6 +48,14 @@ export default class extends React.PureComponent<IProps> {
     }
 
     render() {
-        return <canvas ref={this.setContext} onClick={this.redraw} />
+        const { width, height } = this.props
+
+        return (
+            <canvas
+                style={{ width, height }}
+                ref={this.setContext}
+                onClick={this.redraw}
+            />
+        )
     }
 }
