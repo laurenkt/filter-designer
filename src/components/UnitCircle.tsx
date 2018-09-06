@@ -195,30 +195,56 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                 />
                 <g>
                     {zeros.map((c: Coordinate, idx) => (
-                        <Cross
-                            key={idx}
-                            r={5}
-                            cx={c.x}
-                            cy={c.y}
-                            stroke="black"
-                            strokeWidth={1}
-                            fill="white"
-                            onDoubleClick={this.onDoubleClick(idx, false)}
-                            onMouseDown={this.onMouseDown(idx, false)}
-                        />
+                        <>
+                            <Cross
+                                key={idx}
+                                r={5}
+                                cx={c.x}
+                                cy={c.y}
+                                stroke="black"
+                                strokeWidth={1}
+                                fill="white"
+                                onDoubleClick={this.onDoubleClick(idx, false)}
+                                onMouseDown={this.onMouseDown(idx, false)}
+                            />
+                            <Cross
+                                key={idx}
+                                r={5}
+                                cx={c.x}
+                                cy={-c.y}
+                                stroke="black"
+                                strokeWidth={1}
+                                fill="white"
+                                onDoubleClick={this.onDoubleClick(idx, false)}
+                                onMouseDown={this.onMouseDown(idx, false)}
+                            />
+                        </>
                     ))}
                     {poles.map((c: Coordinate, idx) => (
-                        <circle
-                            key={idx}
-                            r={5}
-                            cx={c.x}
-                            cy={c.y}
-                            stroke="black"
-                            strokeWidth={1}
-                            fill="white"
-                            onDoubleClick={this.onDoubleClick(idx, true)}
-                            onMouseDown={this.onMouseDown(idx, true)}
-                        />
+                        <>
+                            <circle
+                                key={idx}
+                                r={5}
+                                cx={c.x}
+                                cy={c.y}
+                                stroke="black"
+                                strokeWidth={1}
+                                fill="white"
+                                onDoubleClick={this.onDoubleClick(idx, true)}
+                                onMouseDown={this.onMouseDown(idx, true)}
+                            />
+                            <circle
+                                key={idx}
+                                r={5}
+                                cx={c.x}
+                                cy={-c.y}
+                                stroke="black"
+                                strokeWidth={1}
+                                fill="white"
+                                onDoubleClick={this.onDoubleClick(idx, true)}
+                                onMouseDown={this.onMouseDown(idx, true)}
+                            />
+                        </>
                     ))}
                 </g>
             </svg>

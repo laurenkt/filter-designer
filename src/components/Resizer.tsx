@@ -45,7 +45,6 @@ export default class extends React.PureComponent<Props, State> {
             <div
                 // @ts-ignore For some reason this fails typecheck
                 ref={this.registerObserver}
-                style={{ flex: 1, width: "100%" }}
                 {...props}
             >
                 {width > 0 && height > 0 && children(width, height)}

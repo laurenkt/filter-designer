@@ -19,28 +19,34 @@ let isAudioWorkletInBaseAudioContext = () => {
     )
 }
 
-interface Coefficients {
+export interface Coefficients {
     A: number[]
     B: number[]
 }
 
-class App extends React.Component {
+interface State {
+    coeffs: Coefficients
+}
+
+class App extends React.PureComponent<{}, State> {
     state = {
-        coeffA: [0.5, 0.5],
-        coeffB: [0, 1],
+        coeffs: {
+            A: [0.5, 0.5],
+            B: [0, 1],
+        },
     }
 
     audioWorkletAvailable: boolean = isAudioWorkletInBaseAudioContext()
 
     onChangeCoeffs = (A: number[], B: number[]) => {
-        this.setState({ coeffA: A, coeffB: B })
+        this.setState({ coeffs: { A, B } })
     }
 
     render() {
-        const { coeffA, coeffB } = this.state
+        const { coeffs } = this.state
 
         return (
-            <div className="fill">
+            <>
                 <div className="row">
                     <div className="panel">
                         {this.audioWorkletAvailable &&
@@ -51,8 +57,8 @@ class App extends React.Component {
                             <UnitCircle
                                 width={width}
                                 height={height}
-                                coeffA={coeffA}
-                                coeffB={coeffB}
+                                coeffA={coeffs.A}
+                                coeffB={coeffs.B}
                                 onChangeCoeffs={this.onChangeCoeffs}
                             />
                         )}
@@ -64,20 +70,18 @@ class App extends React.Component {
                             <Response
                                 width={width}
                                 height={height}
-                                coeffA={coeffA}
-                                coeffB={coeffB}
+                                coeffA={coeffs.A}
+                                coeffB={coeffs.B}
                             />
                         )}
                     </Resizer>
-                    <DifferenceEquations coeffA={coeffA} coeffB={coeffB} />
+                    <DifferenceEquations coeffA={coeffs.A} coeffB={coeffs.B} />
                 </div>
-            </div>
+            </>
         )
     }
 }
 
 document.addEventListener("DOMContentLoaded", _ => {
-    const root = document.createElement("main")
-    render(<App />, root)
-    $("body")!.appendChild(root)
+    render(<App />, document.querySelector("body"))
 })
