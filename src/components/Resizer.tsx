@@ -31,6 +31,10 @@ export default class extends React.PureComponent<Props, State> {
 
     registerObserver = (instance: HTMLElement | null) => {
         if (instance) {
+            this.setState({
+                width: instance.clientWidth,
+                height: instance.clientHeight,
+            })
             this.observer.observe(instance)
         }
     }

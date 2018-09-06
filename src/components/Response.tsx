@@ -17,7 +17,7 @@ export default class extends React.PureComponent<Props> {
         this.canvas = canvas
         this.ctx = canvas.getContext("2d")!
         const { width, height } = this.props
-        this.imageData = this.ctx.createImageData(width, height)
+        this.imageData = this.ctx.createImageData(width * 2, height * 2)
         this.redraw()
     }
 
@@ -25,8 +25,8 @@ export default class extends React.PureComponent<Props> {
         this.values = new Int16Array(nextProps.width)
         if (this.ctx) {
             this.imageData = this.ctx.createImageData(
-                nextProps.width,
-                nextProps.height
+                nextProps.width * 2,
+                nextProps.height * 2
             )
         }
     }
@@ -36,31 +36,37 @@ export default class extends React.PureComponent<Props> {
             const ctx = this.ctx
 
             if (this.imageData && this.values) {
-                for (let i = 0; i < this.values.length; i++) {
+                const { width, height } = this.props
+                const w = width * 2
+                const h = height * 2
+
+                for (let i = 0; i < w; i++) {
                     this.values[i] =
-                        this.values[(i - 1) % this.values.length] +
-                        (Math.random() - 0.5) *
-                            Math.random() *
-                            Math.random() *
-                            2
+                        (this.values[(i - 2) % w] +
+                            this.values[(i - 1) % w] +
+                            (Math.random() - 0.5) * 5) /
+                        2
                 }
 
-                for (let x = 0; x < this.imageData.width; x++) {
-                    for (let y = 0; y < this.imageData.height; y++) {
-                        const offset = (x + y * this.imageData.width) * 4
-                        const value =
-                            Math.abs(y - this.imageData.height / 2) <
-                            Math.abs(this.values[x])
-                                ? 0x00
-                                : 0xff
+                const origin = h / 2
 
-                        this.imageData.data[offset + 0] = value
-                        this.imageData.data[offset + 1] = value
-                        this.imageData.data[offset + 2] = value
+                for (let x = 0; x < w; x++) {
+                    const line = this.values[x]
+
+                    for (let y = 0; y < h; y++) {
+                        const offset = (x + y * w) * 4
+
+                        const real_y = y - 150
+
+                        const output = real_y === line ? 0x00 : 0xff
+
+                        this.imageData.data[offset + 0] = output
+                        this.imageData.data[offset + 1] = output
+                        this.imageData.data[offset + 2] = output
                         this.imageData.data[offset + 3] = 0xff
                     }
                 }
-                ctx.putImageData(this.imageData!, 0, 0)
+                ctx.putImageData(this.imageData!, 0, 0, 0, 0, w, h)
             }
 
             /*
@@ -95,6 +101,8 @@ export default class extends React.PureComponent<Props> {
 
         return (
             <canvas
+                width={width * 2}
+                height={height * 2}
                 style={{ width, height }}
                 ref={this.setContext}
                 onClick={this.redraw}

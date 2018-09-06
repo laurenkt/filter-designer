@@ -3,7 +3,8 @@ $system: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     sans-serif;
 
 body,
-html {
+html,
+main {
     font: normal 20px / 1.6 $system;
     padding: 0;
     margin: 0;
@@ -27,12 +28,6 @@ a {
     &:hover {
         border-bottom: 2px solid #ddd;
     }
-}
-
-canvas {
-    width: 100%;
-    min-height: 200px;
-    height: 200px;
 }
 
 section {

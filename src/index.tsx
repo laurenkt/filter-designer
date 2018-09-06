@@ -83,5 +83,5 @@ class App extends React.PureComponent<{}, State> {
 }
 
 document.addEventListener("DOMContentLoaded", _ => {
-    render(<App />, document.querySelector("body"))
+    render(<App />, document.querySelector("main"))
 })
