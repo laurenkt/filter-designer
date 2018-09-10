@@ -14,15 +14,17 @@ export default class extends React.PureComponent<Props> {
     private values?: Int16Array
 
     setContext = (canvas: HTMLCanvasElement) => {
-        this.canvas = canvas
-        this.ctx = canvas.getContext("2d")!
         const { width, height } = this.props
+        this.canvas = canvas
+        this.canvas.width = width * 2
+        this.canvas.height = height * 2
+        this.ctx = canvas.getContext("2d")!
         this.imageData = this.ctx.createImageData(width * 2, height * 2)
         this.redraw()
     }
 
     UNSAFE_componentWillReceiveProps(nextProps: Props) {
-        this.values = new Int16Array(nextProps.width)
+        this.values = new Int16Array(nextProps.width * 2)
         if (this.ctx) {
             this.imageData = this.ctx.createImageData(
                 nextProps.width * 2,
@@ -56,7 +58,7 @@ export default class extends React.PureComponent<Props> {
                     for (let y = 0; y < h; y++) {
                         const offset = (x + y * w) * 4
 
-                        const real_y = y - 150
+                        const real_y = y - Math.round(height)
 
                         const output = real_y === line ? 0x00 : 0xff
 
@@ -66,7 +68,7 @@ export default class extends React.PureComponent<Props> {
                         this.imageData.data[offset + 3] = 0xff
                     }
                 }
-                ctx.putImageData(this.imageData!, 0, 0, 0, 0, w, h)
+                ctx.putImageData(this.imageData!, 0, 0)
             }
 
             /*
@@ -101,8 +103,6 @@ export default class extends React.PureComponent<Props> {
 
         return (
             <canvas
-                width={width * 2}
-                height={height * 2}
                 style={{ width, height }}
                 ref={this.setContext}
                 onClick={this.redraw}
