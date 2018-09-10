@@ -38,16 +38,13 @@ export default class DifferenceEquations extends React.PureComponent<IProps> {
         }
 
         function printCoeffForVariable(varName: string) {
-            const round = (number: number, digits: number) =>
-                Math.round(number * 10 * digits) / (10 * digits)
-
             return (val: number, idx: number) => {
                 if (val === 0) {
                     return ""
                 } else {
                     return `${
-                        val != 1 ? round(val, 2) + "*" : ""
-                    }${varName}[${idxToOffset(a.length - 1 - idx)}]`
+                        val != 1 ? val.toFixed(3) + "*" : ""
+                    }${varName}[${idxToOffset(idx)}]`
                 }
             }
         }

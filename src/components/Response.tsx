@@ -16,8 +16,6 @@ export default class extends React.PureComponent<Props> {
     setContext = (canvas: HTMLCanvasElement) => {
         const { width, height } = this.props
         this.canvas = canvas
-        this.canvas.width = width * 2
-        this.canvas.height = height * 2
         this.ctx = canvas.getContext("2d")!
         this.imageData = this.ctx.createImageData(width * 2, height * 2)
         this.redraw()
@@ -46,7 +44,7 @@ export default class extends React.PureComponent<Props> {
                     this.values[i] =
                         (this.values[(i - 2) % w] +
                             this.values[(i - 1) % w] +
-                            (Math.random() - 0.5) * 5) /
+                            (Math.random() - 0.5) * 20) /
                         2
                 }
 
@@ -60,7 +58,7 @@ export default class extends React.PureComponent<Props> {
 
                         const real_y = y - Math.round(height)
 
-                        const output = real_y === line ? 0x00 : 0xff
+                        const output = real_y < line ? 0x00 : 0xff
 
                         this.imageData.data[offset + 0] = output
                         this.imageData.data[offset + 1] = output
@@ -103,6 +101,8 @@ export default class extends React.PureComponent<Props> {
 
         return (
             <canvas
+                width={width * 2}
+                height={height * 2}
                 style={{ width, height }}
                 ref={this.setContext}
                 onClick={this.redraw}

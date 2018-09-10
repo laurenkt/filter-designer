@@ -146,3 +146,45 @@ code {
         height: 100% !important;
     }
 }
+
+button {
+    background: #658d99;
+    font-weight: bold;
+    font-size: 13px;
+    text-transform: uppercase;
+    display: inline-block;
+    padding: 10px 20px;
+    border: 0;
+    border-radius: 5px;
+    margin: 10px 0;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.3s;
+    color: white;
+    margin-left: 10px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+
+    &.active {
+        background: #1ab2e0;
+    }
+
+    &:hover {
+        background: #5294b7;
+    }
+
+    &:active {
+        background: black;
+        transform: translateY(1px);
+    }
+
+    & ~ button {
+        margin-left: 0;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    &:last-of-type {
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+    }
+}

@@ -120,11 +120,6 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
 
         window.removeEventListener("mousemove", this.onMouseMoveListener!)
         window.removeEventListener("mouseup", this.onMouseUpListener!)
-
-        this.props.onChangeCoeffs(
-            [Math.random(), Math.random()],
-            [Math.random(), Math.random()]
-        )
     }
 
     onMouseMove = (idx: number, isPole: boolean) => (e: MouseEvent) => {
@@ -155,6 +150,22 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                 zeros,
             })
         }
+
+        const { poles, zeros } = this.state
+
+        const p = poles.map(pole => ({
+            theta: Math.atan2(Math.abs(pole.y), pole.x),
+            r: Math.sqrt(pole.x / 50 ** 2 + pole.y / 50 ** 2),
+        }))
+        const z = zeros.map(zero => ({
+            theta: Math.atan2(Math.abs(zero.y), zero.x),
+            r: Math.sqrt(zero.x / 50 ** 2 + zero.y / 50 ** 2),
+        }))
+
+        this.props.onChangeCoeffs(
+            [1, -2 * z[0].r * Math.cos(z[0].theta), 1],
+            [1, 2 * p[0].r * Math.cos(p[0].theta), -1 * p[0].r ** 2]
+        )
     }
 
     render() {

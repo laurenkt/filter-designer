@@ -49,8 +49,26 @@ class App extends React.PureComponent<{}, State> {
             <>
                 <div className="row">
                     <div className="panel">
-                        {this.audioWorkletAvailable &&
+                        {!this.audioWorkletAvailable &&
                             "No AudioWorkletProcessor"}
+                        {this.audioWorkletAvailable && (
+                            <>
+                                <div>
+                                    Audio Source
+                                    <button className="active">Noise</button>
+                                    <button>Modern Jazz Radio</button>
+                                </div>
+                                <div>
+                                    Sampling Frequency
+                                    <button className="active">44100kHz</button>
+                                </div>
+                                <div>
+                                    Window
+                                    <button className="active">Hamming</button>
+                                    <button>Rectangular</button>
+                                </div>
+                            </>
+                        )}
                     </div>
                     <Resizer className="panel">
                         {(width, height) => (
