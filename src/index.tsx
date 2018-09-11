@@ -34,6 +34,9 @@ class App extends React.PureComponent<{}, State> {
             A: [0.5, 0.5],
             B: [0, 1],
         },
+        audioSource: "noise",
+        samplingFreq: 44100,
+        window: "hamming",
     }
 
     audioWorkletAvailable: boolean = isAudioWorkletInBaseAudioContext()
@@ -63,9 +66,24 @@ class App extends React.PureComponent<{}, State> {
                                     <button className="active">44100kHz</button>
                                 </div>
                                 <div>
+                                    Show Aliasing
+                                    <button>Yes</button>
+                                    <button className="active">No</button>
+                                </div>
+                                <div>
                                     Window
                                     <button className="active">Hamming</button>
                                     <button>Rectangular</button>
+                                </div>
+                                <div>
+                                    Generate AudioWorklet
+                                    <button>Yes</button>
+                                    <button className="active">No</button>
+                                </div>
+                                <div>
+                                    Presets
+                                    <button>Low-pass</button>
+                                    <button>High-pass</button>
                                 </div>
                             </>
                         )}
@@ -88,8 +106,8 @@ class App extends React.PureComponent<{}, State> {
                             <Response
                                 width={width}
                                 height={height}
-                                coeffA={coeffs.A}
-                                coeffB={coeffs.B}
+                                coeffA={[]}
+                                coeffB={[]}
                             />
                         )}
                     </Resizer>

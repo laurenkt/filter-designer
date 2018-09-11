@@ -155,11 +155,11 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
 
         const p = poles.map(pole => ({
             theta: Math.atan2(Math.abs(pole.y), pole.x),
-            r: Math.sqrt(pole.x / 50 ** 2 + pole.y / 50 ** 2),
+            r: Math.sqrt((pole.x / 50) ** 2 + (pole.y / 50) ** 2),
         }))
         const z = zeros.map(zero => ({
             theta: Math.atan2(Math.abs(zero.y), zero.x),
-            r: Math.sqrt(zero.x / 50 ** 2 + zero.y / 50 ** 2),
+            r: Math.sqrt((zero.x / 50) ** 2 + (zero.y / 50) ** 2),
         }))
 
         this.props.onChangeCoeffs(
@@ -180,30 +180,9 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                 viewBox={`-100 -100 200 200`}
                 onDoubleClick={this.onDoubleClick(undefined)}
             >
-                <line
-                    y1={-1000}
-                    y2={1000}
-                    x1={0}
-                    x2={0}
-                    stroke="black"
-                    strokeWidth={1}
-                />
-                <line
-                    y1={0}
-                    y2={0}
-                    x1={-1000}
-                    x2={1000}
-                    stroke="black"
-                    strokeWidth={1}
-                />
-                <circle
-                    r={50}
-                    cx={0}
-                    cy={0}
-                    stroke="black"
-                    strokeWidth={2}
-                    fill="none"
-                />
+                <line y1={-1000} y2={1000} x1={0} x2={0} strokeWidth={1} />
+                <line y1={0} y2={0} x1={-1000} x2={1000} strokeWidth={1} />
+                <circle r={50} cx={0} cy={0} strokeWidth={2} fill="none" />
                 <g>
                     {zeros.map((c: Coordinate, idx) => (
                         <Cross
@@ -211,9 +190,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                             r={5}
                             cx={c.x}
                             cy={c.y}
-                            stroke="black"
                             strokeWidth={1}
-                            fill="white"
                             onDoubleClick={this.onDoubleClick(idx, false)}
                             onMouseDown={this.onMouseDown(idx, false)}
                         />
@@ -224,9 +201,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                             r={5}
                             cx={c.x}
                             cy={-c.y}
-                            stroke="black"
                             strokeWidth={1}
-                            fill="white"
                             onDoubleClick={this.onDoubleClick(idx, false)}
                             onMouseDown={this.onMouseDown(idx, false)}
                         />
@@ -237,9 +212,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                             r={5}
                             cx={c.x}
                             cy={c.y}
-                            stroke="black"
                             strokeWidth={1}
-                            fill="white"
                             onDoubleClick={this.onDoubleClick(idx, true)}
                             onMouseDown={this.onMouseDown(idx, true)}
                         />
@@ -250,9 +223,7 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
                             r={5}
                             cx={c.x}
                             cy={-c.y}
-                            stroke="black"
                             strokeWidth={1}
-                            fill="white"
                             onDoubleClick={this.onDoubleClick(idx, true)}
                             onMouseDown={this.onMouseDown(idx, true)}
                         />

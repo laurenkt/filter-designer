@@ -1,6 +1,8 @@
 $system: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
+$background: #152029;
+$foreground: white;
 
 body,
 html,
@@ -15,6 +17,14 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: $foreground;
+    background: $background;
+}
+
+line,
+rect,
+circle {
+    stroke: $foreground;
 }
 
 * {
