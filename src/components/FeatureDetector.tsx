@@ -51,7 +51,7 @@ const features = [
         friendlyName: "SharedArrayBuffer",
         available: !!("SharedArrayBuffer" in window),
     },
-    { friendlyName: "WebG", available: detectWebGLContext() },
+    { friendlyName: "WebGL", available: detectWebGLContext() },
 ]
 
 export default class extends React.PureComponent<Props> {
