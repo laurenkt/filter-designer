@@ -5,6 +5,10 @@ import { getSupport } from "caniuse-api"
 
 // detection strategy via GoogleChromeLabs/web-audio-samples
 let isAudioWorkletInBaseAudioContext = () => {
+    if (!("OfflineAudioContext" in window)) {
+        return false
+    }
+
     let context = new OfflineAudioContext(1, 1, 44100)
     return (
         context.audioWorklet &&
@@ -42,11 +46,11 @@ const features = [
         friendlyName: "Audio Worklet",
         available: isAudioWorkletInBaseAudioContext(),
     },
-    { friendlyName: "Web Worker", available: !!("Worker" in window) },
-    {
+    //{ friendlyName: "Web Worker", available: !!("Worker" in window) },
+    /*{
         friendlyName: "Offscreen Canvas",
         available: !!("OffscreenCanvas" in window),
-    },
+    },*/
     {
         friendlyName: "SharedArrayBuffer",
         available: !!("SharedArrayBuffer" in window),

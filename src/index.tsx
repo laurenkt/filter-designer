@@ -3,6 +3,7 @@ import { render } from "react-dom"
 import FeatureDetector from "./components/FeatureDetector"
 import App from "./App"
 import "./style.scss"
+import "./nodes/filter-node"
 
 const $ = (selector: string) => document.querySelector(selector)
 
@@ -13,7 +14,7 @@ document.addEventListener("DOMContentLoaded", _ => {
         <FeatureDetector
             fallback={features => (
                 <>
-                    <p style={{ maxWidth: 500; textAlign: 'center' }}>
+                    <p style={{ maxWidth: 500, textAlign: "center" }}>
                         This is a tech demo and uses features that are only
                         recently developed and don't currently have widespread
                         adoption. Your browser does not support some of the

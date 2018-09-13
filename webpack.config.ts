@@ -1,74 +1,86 @@
-import path from 'path';
-import HtmlPlugin from 'html-webpack-plugin';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
+import path from "path"
+import HtmlPlugin from "html-webpack-plugin"
+import CopyWebpackPlugin from "copy-webpack-plugin"
 
 export default {
-    mode: 'development',
-    entry: path.resolve(__dirname, 'src', 'index.tsx'),
+    mode: "development",
+    entry: {
+        bundle: path.resolve(__dirname, "src", "index.tsx"),
+        "filter-worklet": path.resolve(
+            __dirname,
+            "src",
+            "workers",
+            "filter-worklet.ts"
+        ),
+    },
     output: {
-        filename: 'bundle.js',
-        path: path.resolve(__dirname, 'dist')
+        filename: "[name].js",
+        path: path.resolve(__dirname, "dist"),
+        globalObject: `typeof self !== 'undefined' ? self : this`,
     },
     // Don't bundle these into the output
     externals: {},
     resolve: {
-        extensions: ['.tsx', '.ts', '.jsx', '.js']
+        extensions: [".tsx", ".ts", ".jsx", ".js"],
     },
     // Load any js files through babel for polyfills etc
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: ['awesome-typescript-loader']
+                use: ["awesome-typescript-loader"],
             },
             // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             {
-                enforce: 'pre',
+                enforce: "pre",
                 test: /\.js$/,
-                use: 'source-map-loader'
+                use: "source-map-loader",
             },
             {
                 test: /\.css$/,
-                use: ['style-loader', 'css-loader']
+                use: ["style-loader", "css-loader"],
             },
             {
                 test: /\.png$/,
-                loader: 'file-loader'
+                loader: "file-loader",
             },
             {
                 test: /\.(ttf|eot|woff|woff2|svg|otf)$/,
-                loader: 'file-loader',
+                loader: "file-loader",
                 options: {
-                    name: 'fonts/[name].[ext]'
-                }
+                    name: "fonts/[name].[ext]",
+                },
             },
             {
                 test: /\.wav/,
                 use: {
-                    loader: 'url-loader'
-                }
+                    loader: "url-loader",
+                },
             },
             {
                 test: /\.scss$/,
-                use: ['style-loader', 'css-loader', 'sass-loader']
+                use: ["style-loader", "css-loader", "sass-loader"],
             },
             {
                 test: /\.md$/,
-                use: ['html-loader', 'markdown-loader']
-            }
-        ]
+                use: ["html-loader", "markdown-loader"],
+            },
+        ],
     },
     // Hot module reloading for CSS etc
     plugins: [
-        new HtmlPlugin({ template: 'src/index.html' }),
+        new HtmlPlugin({
+            template: "src/index.html",
+            excludeChunks: ["filter-worklet"],
+        }),
         new CopyWebpackPlugin([
-            { from: 'src/assets/**/*', to: 'assets/[name].[ext]' }
-        ])
+            { from: "src/assets/**/*", to: "assets/[name].[ext]" },
+        ]),
     ],
-    devtool: 'inline-source-map',
+    devtool: "inline-source-map",
     devServer: {
-        contentBase: path.join(__dirname, 'dist'),
+        contentBase: path.join(__dirname, "dist"),
         hot: true, // Enable HMR
-        watchContentBase: true // Needed to auto update when index.html changes
-    }
-};
+        watchContentBase: true, // Needed to auto update when index.html changes
+    },
+}
