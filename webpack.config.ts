@@ -6,11 +6,11 @@ export default {
     mode: "development",
     entry: {
         bundle: path.resolve(__dirname, "src", "index.tsx"),
-        "filter-worklet": path.resolve(
+        "noise-worklet": path.resolve(
             __dirname,
             "src",
             "workers",
-            "filter-worklet.ts"
+            "noise-worklet.ts"
         ),
     },
     output: {
@@ -21,7 +21,7 @@ export default {
     // Don't bundle these into the output
     externals: {},
     resolve: {
-        extensions: [".tsx", ".ts", ".jsx", ".js"],
+        extensions: [".tsx", ".ts", ".js", ".jsx"],
     },
     // Load any js files through babel for polyfills etc
     module: {

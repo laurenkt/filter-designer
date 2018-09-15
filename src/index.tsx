@@ -3,11 +3,14 @@ import { render } from "react-dom"
 import FeatureDetector from "./components/FeatureDetector"
 import App from "./App"
 import "./style.scss"
-import "./nodes/filter-node"
+import NoiseNodeFactory from "./nodes/noise-node"
 
-const $ = (selector: string) => document.querySelector(selector)
+const audioCtx = new AudioContext()
 
-class Mount extends React.PureComponent {}
+NoiseNodeFactory(audioCtx).then(NoiseNode => {
+    let node = new NoiseNode()
+    node.connect(audioCtx.destination)
+})
 
 document.addEventListener("DOMContentLoaded", _ => {
     render(

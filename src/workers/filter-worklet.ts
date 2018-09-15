@@ -1,32 +1,3 @@
-type AudioParams = {
-    [key: string]: AudioParam
-}
-
-interface AudioWorkletProcessor {
-    port: MessagePort
-    process(
-        inputs: Float32Array[][],
-        outputs: Float32Array[][],
-        parameters: AudioParams
-    ): boolean
-}
-
-declare var AudioWorkletProcessor: {
-    prototype: AudioWorkletProcessor
-    port: MessagePort
-    process(
-        inputs: Float32Array[][],
-        outputs: Float32Array[][],
-        parameters: AudioParams
-    ): boolean
-    new (): AudioWorkletProcessor
-}
-
-declare function registerProcessor(
-    name: string,
-    processor: AudioWorkletProcessor
-): void
-
 export default class FilterWorkletProcessor extends AudioWorkletProcessor {
     // Static getter to define AudioParam objects in this custom processor.
     static get parameterDescriptors() {
@@ -71,7 +42,7 @@ export default class FilterWorkletProcessor extends AudioWorkletProcessor {
 
         // Simple gain (multiplication) processing over a render quantum (128 samples).
         // This processor only supports the mono channel.
-        for (let i = 0; i < inputChannel0.length; ++i) {
+        for (let i = 0; i < outputChannel0.length; ++i) {
             outputChannel0[i] = Math.random() * 2 - 1
         }
 
