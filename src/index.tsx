@@ -3,14 +3,6 @@ import { render } from "react-dom"
 import FeatureDetector from "./components/FeatureDetector"
 import App from "./App"
 import "./style.scss"
-import NoiseNodeFactory from "./nodes/noise-node"
-
-const audioCtx = new AudioContext()
-
-NoiseNodeFactory(audioCtx).then(NoiseNode => {
-    let node = new NoiseNode()
-    node.connect(audioCtx.destination)
-})
 
 document.addEventListener("DOMContentLoaded", _ => {
     render(

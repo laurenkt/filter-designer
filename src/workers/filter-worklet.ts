@@ -1,54 +1,62 @@
-export default class FilterWorkletProcessor extends AudioWorkletProcessor {
-    // Static getter to define AudioParam objects in this custom processor.
-    static get parameterDescriptors() {
-        return [
+const WINDOW_SIZE = 1024
+
+registerProcessor(
+    "filter-worklet",
+    class extends AudioWorkletProcessor {
+        static parameterDescriptors = [
             {
-                name: "myParam",
-                defaultValue: 0.707,
+                name: "coeffs",
+                defaultValue: [0],
             },
         ]
-    }
 
-    constructor() {
-        super()
+        y_buffer = new Float32Array(WINDOW_SIZE)
+        x_buffer = new Float32Array(WINDOW_SIZE)
+        head = 0
 
-        this.port.onmessage = event => {
-            // Handling data from the node.
-            console.log(event.data)
+        constructor() {
+            super()
+
+            this.port.onmessage = event => {
+                // Handling data from the node.
+                console.log(event.data)
+            }
+
+            this.port.postMessage("Hi!")
         }
 
-        this.port.postMessage("Hi!")
-    }
+        filter(y: Float32Array, x: Float32Array, n: number): void {}
 
-    process(
-        inputs: Float32Array[][],
-        outputs: Float32Array[][],
-        parameters: AudioParams
-    ) {
-        // |myParamValues| is a Float32Array of 128 audio samples calculated
-        // by WebAudio engine from regular AudioParam operations. (automation
-        // methods, setter) By default this array would be all values of 0.707
-        // The processor may have multiple inputs and outputs. Get the first input and
-        // output.
-        let input = inputs[0]
-        let output = outputs[0]
+        process(
+            inputs: Float32Array[][],
+            outputs: Float32Array[][],
+            parameters: AudioParams
+        ) {
+            let n = this.head
+            const x = this.x_buffer
+            const y = this.y_buffer
 
-        // Each input or output may have multiple channels. Get the first channel.
-        let inputChannel0 = input[0]
-        let outputChannel0 = output[0]
+            let input = inputs[0]
+            let output = outputs[0]
+            let inputChannel0 = input[0]
+            let outputChannel0 = output[0]
 
-        // Get the parameter value array.
-        let myParamValues = parameters.myParam
+            for (let i = 0; i < outputChannel0.length; ++i) {
+                x[n] = inputChannel0[i]
+                y[n] =
+                    -1.153 * y[(n - 1) & WINDOW_SIZE] -
+                    -3.443 * y[(n - 2) & WINDOW_SIZE] +
+                    x[n] +
+                    -1.531 * x[(n - 1) & WINDOW_SIZE] +
+                    x[(n - 2) & WINDOW_SIZE]
 
-        // Simple gain (multiplication) processing over a render quantum (128 samples).
-        // This processor only supports the mono channel.
-        for (let i = 0; i < outputChannel0.length; ++i) {
-            outputChannel0[i] = Math.random() * 2 - 1
+                outputChannel0[i] = y[n]
+                n = (n + 1) & WINDOW_SIZE
+            }
+
+            this.head = n
+
+            return true
         }
-
-        // To keep this processor alive.
-        return true
     }
-}
-
-registerProcessor("filter-worklet", FilterWorkletProcessor)
+)

@@ -6,6 +6,12 @@ export default {
     mode: "development",
     entry: {
         bundle: path.resolve(__dirname, "src", "index.tsx"),
+        "filter-worklet": path.resolve(
+            __dirname,
+            "src",
+            "workers",
+            "filter-worklet.ts"
+        ),
         "noise-worklet": path.resolve(
             __dirname,
             "src",

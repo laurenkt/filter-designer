@@ -3,6 +3,9 @@ import UnitCircle from "./components/UnitCircle"
 import DifferenceEquations from "./components/DifferenceEquations"
 import Response from "./components/Response"
 import Resizer from "./components/Resizer"
+import NoiseNodeFactory from "./nodes/noise-node"
+import FilterNodeFactory from "./nodes/filter-node"
+import memoize from "memoize-one"
 
 declare var AudioWorkletProcessor: any
 
@@ -21,7 +24,7 @@ export default class extends React.PureComponent<{}, State> {
             A: [0.5, 0.5],
             B: [0, 1],
         },
-        audioSource: "noise",
+        audioSource: null,
         samplingFreq: 44100,
         window: "hamming",
     }
@@ -29,6 +32,25 @@ export default class extends React.PureComponent<{}, State> {
     onChangeCoeffs = (A: number[], B: number[]) => {
         this.setState({ coeffs: { A, B } })
     }
+
+    onClick = memoize(
+        (key: string, value: string) => async (
+            event: React.MouseEvent<HTMLElement>
+        ) => {
+            event.preventDefault()
+
+            const audioCtx = new AudioContext()
+
+            const NoiseNode = await NoiseNodeFactory(audioCtx)
+            const FilterNode = await FilterNodeFactory(audioCtx)
+
+            const source = new NoiseNode()
+            const filter = new FilterNode()
+
+            source.connect(filter)
+            filter.connect(audioCtx.destination)
+        }
+    )
 
     render() {
         const { coeffs } = this.state
@@ -39,7 +61,12 @@ export default class extends React.PureComponent<{}, State> {
                     <div className="panel">
                         <div>
                             Audio Source
-                            <button className="active">Noise</button>
+                            <button
+                                onClick={this.onClick("audioSource", "noise")}
+                                className="active"
+                            >
+                                Noise
+                            </button>
                             <button>Modern Jazz Radio</button>
                         </div>
                         <div>

@@ -22,6 +22,7 @@
     "license": "ISC",
     "dependencies": {
         "@types/inline-style-prefixer": "^3.0.1",
+        "@types/memoize-one": "^3.1.1",
         "autobind-decorator": "^2.1.0",
         "babel-core": "^6.26.0",
         "babel-eslint": "^8.2.1",
@@ -48,6 +49,7 @@
         "lint-staged": "^6.1.0",
         "lodash": "^4.17.4",
         "markdown-loader": "^2.0.2",
+        "memoize-one": "^4.0.2",
         "node-sass": "^4.7.2",
         "prettier": "^1.14.0",
         "raw-loader": "^0.5.1",
