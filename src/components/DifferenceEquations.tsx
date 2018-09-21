@@ -37,28 +37,43 @@ export default class DifferenceEquations extends React.PureComponent<IProps> {
             return `n-${idx}`
         }
 
-        function printCoeffForVariable(varName: string) {
+        function printCoeffForVariable(
+            varName: string,
+            offset: number = 0,
+            scale: number = 1
+        ) {
             return (val: number, idx: number) => {
+                val *= scale
                 if (val === 0) {
                     return ""
                 } else {
                     return `${
                         val != 1 ? val.toFixed(3) + "*" : ""
-                    }${varName}[${idxToOffset(idx)}]`
+                    }${varName}[${idxToOffset(idx + offset)}]`
                 }
             }
         }
 
-        function printCoeffsForVariable(varName: string, c: Coefficients) {
+        function printCoeffsForVariable(
+            varName: string,
+            c: Coefficients,
+            offset: number = 0,
+            scale: number = 1
+        ) {
             return c
-                .map(printCoeffForVariable(varName))
+                .map(printCoeffForVariable(varName, offset, scale))
                 .filter(s => s != "")
                 .join(" + ")
         }
 
-        return `${printCoeffsForVariable("y", b)} = ${printCoeffsForVariable(
-            "x",
-            a
+        return `${printCoeffForVariable("y")(
+            b[0],
+            0
+        )} = ${printCoeffsForVariable("x", a)} + ${printCoeffsForVariable(
+            "y",
+            b.slice(1),
+            1,
+            -1
         )}`
     }
 }
