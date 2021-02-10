@@ -50,7 +50,7 @@
         "lodash": "^4.17.4",
         "markdown-loader": "^2.0.2",
         "memoize-one": "^4.0.2",
-        "node-sass": "^4.7.2",
+        "node-sass": "^4.13.1",
         "prettier": "^1.14.0",
         "raw-loader": "^0.5.1",
         "rc-slider": "^8.6.1",
