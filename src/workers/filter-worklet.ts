@@ -43,13 +43,7 @@ registerProcessor(
 
             for (let i = 0; i < outputChannel0.length; ++i) {
                 x[n] = inputChannel0[i]
-                y[n] =
-                    -1.153 * y[(n - 1) & WINDOW_SIZE] -
-                    -3.443 * y[(n - 2) & WINDOW_SIZE] +
-                    x[n] +
-                    -1.531 * x[(n - 1) & WINDOW_SIZE] +
-                    x[(n - 2) & WINDOW_SIZE]
-
+                y[n] = 0.5 * x[n] + 0.5 * x[Math.round((n - 1) & WINDOW_SIZE)]
                 outputChannel0[i] = y[n]
                 n = (n + 1) & WINDOW_SIZE
             }

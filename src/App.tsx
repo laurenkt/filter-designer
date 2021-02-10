@@ -14,6 +14,24 @@ export interface Coefficients {
     B: number[]
 }
 
+function CountDisplay() {
+    const [count, setCount] = useState(0);
+
+    return <MyBeautifulPanelControl>
+        <button onClick={() => setCount(count+1)} />
+    </MyBeautifulPanelControl>
+}
+
+function MyFancyButton({onClick}) {
+    return <button onClick={onClick}>Great Button!</button>
+}
+
+function MyBeautifulPanelControl({children}) {
+    return <div class="bunch of stupid classes and shit"><span class="why though">
+        {children}
+    </span></div>
+}
+
 interface State {
     coeffs: Coefficients
 }
