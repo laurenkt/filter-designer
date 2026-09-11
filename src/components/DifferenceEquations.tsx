@@ -1,9 +1,13 @@
 import React from "react"
-import brace from "brace"
 import AceEditor from "react-ace"
+import ace from "ace-builds"
 
-import "brace/mode/java"
-import "brace/theme/github"
+import "ace-builds/src-noconflict/mode-javascript"
+import "ace-builds/src-noconflict/theme-github"
+
+// Configure ACE to not use web workers
+ace.config.set("workerPath", "")
+ace.config.set("loadWorkerFromBlob", false)
 
 interface IProps extends React.ClassAttributes<DifferenceEquations> {
     coeffA: number[]

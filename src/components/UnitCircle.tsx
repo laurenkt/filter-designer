@@ -52,7 +52,7 @@ class Cross extends React.PureComponent<{
 }
 
 export default class UnitCircle extends React.PureComponent<IProps, IState> {
-    private svg: SVGSVGElement
+    private svg!: SVGSVGElement
     private onMouseUpListener?: EventListener
     private onMouseMoveListener?: EventListener
 
@@ -107,8 +107,8 @@ export default class UnitCircle extends React.PureComponent<IProps, IState> {
         e.preventDefault()
         e.stopPropagation()
 
-        this.onMouseMoveListener = this.onMouseMove(idx, isPole)
-        this.onMouseUpListener = this.onMouseUp(idx)
+        this.onMouseMoveListener = this.onMouseMove(idx, isPole) as EventListener
+        this.onMouseUpListener = this.onMouseUp(idx) as EventListener
 
         window.addEventListener("mousemove", this.onMouseMoveListener)
         window.addEventListener("mouseup", this.onMouseUpListener)

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState } from "react"
 import UnitCircle from "./components/UnitCircle"
 import DifferenceEquations from "./components/DifferenceEquations"
 import Response from "./components/Response"
@@ -22,12 +22,20 @@ function CountDisplay() {
     </MyBeautifulPanelControl>
 }
 
-function MyFancyButton({onClick}) {
+interface ButtonProps {
+    onClick: () => void;
+}
+
+function MyFancyButton({onClick}: ButtonProps) {
     return <button onClick={onClick}>Great Button!</button>
 }
 
-function MyBeautifulPanelControl({children}) {
-    return <div class="bunch of stupid classes and shit"><span class="why though">
+interface PanelProps {
+    children: React.ReactNode;
+}
+
+function MyBeautifulPanelControl({children}: PanelProps) {
+    return <div className="bunch of stupid classes and shit"><span className="why though">
         {children}
     </span></div>
 }

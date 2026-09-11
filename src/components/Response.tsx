@@ -8,8 +8,8 @@ interface Props {
 }
 
 export default class extends React.PureComponent<Props> {
-    private ctx: CanvasRenderingContext2D
-    private canvas: HTMLCanvasElement
+    private ctx!: CanvasRenderingContext2D
+    private canvas!: HTMLCanvasElement
     private imageData?: ImageData
     private values?: Int16Array
 

@@ -1,7 +1,7 @@
 import React from "react"
 
-interface Props extends Partial<React.HTMLProps<HTMLElement>> {
-    children(width: number, height: number): JSX.Element
+interface Props extends Omit<Partial<React.HTMLProps<HTMLDivElement>>, 'children'> {
+    children(width: number, height: number): React.ReactElement
 }
 
 interface State {

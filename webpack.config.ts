@@ -1,42 +1,40 @@
 import path from "path"
+import { fileURLToPath } from "url"
 import HtmlPlugin from "html-webpack-plugin"
 import CopyWebpackPlugin from "copy-webpack-plugin"
+import webpack from "webpack"
 
-export default {
-    mode: "development",
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+
+const isProduction = process.env.NODE_ENV === "production"
+
+const config = {
+    mode: isProduction ? "production" : "development",
     entry: {
         bundle: path.resolve(__dirname, "src", "index.tsx"),
-        "filter-worklet": path.resolve(
-            __dirname,
-            "src",
-            "workers",
-            "filter-worklet.ts"
-        ),
-        "noise-worklet": path.resolve(
-            __dirname,
-            "src",
-            "workers",
-            "noise-worklet.ts"
-        ),
     },
     output: {
         filename: "[name].js",
         path: path.resolve(__dirname, "dist"),
-        globalObject: "(this||{})",
+        publicPath: "/",
+        clean: true,
     },
-    // Don't bundle these into the output
-    externals: {},
     resolve: {
         extensions: [".tsx", ".ts", ".js", ".jsx"],
     },
-    // Load any js files through babel for polyfills etc
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+        },
+    },
     module: {
         rules: [
             {
                 test: /\.tsx?$/,
-                use: ["awesome-typescript-loader"],
+                use: "ts-loader",
+                exclude: /node_modules/,
             },
-            // All output '.js' files will have any sourcemaps re-processed by 'source-map-loader'.
             {
                 enforce: "pre",
                 test: /\.js$/,
@@ -47,46 +45,54 @@ export default {
                 use: ["style-loader", "css-loader"],
             },
             {
-                test: /\.png$/,
-                loader: "file-loader",
+                test: /\.(png|jpe?g|gif)$/i,
+                type: "asset/resource",
             },
             {
                 test: /\.(ttf|eot|woff|woff2|svg|otf)$/,
-                loader: "file-loader",
-                options: {
-                    name: "fonts/[name].[ext]",
+                type: "asset/resource",
+                generator: {
+                    filename: "fonts/[name][ext]",
                 },
             },
             {
-                test: /\.wav/,
-                use: {
-                    loader: "url-loader",
-                },
+                test: /\.wav$/,
+                type: "asset/inline",
             },
             {
                 test: /\.scss$/,
                 use: ["style-loader", "css-loader", "sass-loader"],
             },
-            {
-                test: /\.md$/,
-                use: ["html-loader", "markdown-loader"],
-            },
         ],
     },
-    // Hot module reloading for CSS etc
     plugins: [
         new HtmlPlugin({
             template: "src/index.html",
-            excludeChunks: ["filter-worklet"],
+            chunks: ["bundle"],
         }),
-        new CopyWebpackPlugin([
-            { from: "src/assets/**/*", to: "assets/[name].[ext]" },
-        ]),
+        new CopyWebpackPlugin({
+            patterns: [
+                { 
+                    from: "src/assets",
+                    to: "assets",
+                    noErrorOnMissing: true
+                },
+            ],
+        }),
     ],
     devtool: "inline-source-map",
     devServer: {
-        contentBase: path.join(__dirname, "dist"),
-        hot: false, // Enable HMR
-        watchContentBase: true, // Needed to auto update when index.html changes
+        static: {
+            directory: path.join(__dirname, "dist"),
+        },
+        hot: true,
+        open: true,
+        port: 3000,
+        headers: {
+            "Cross-Origin-Opener-Policy": "same-origin",
+            "Cross-Origin-Embedder-Policy": "require-corp"
+        },
     },
 }
+
+export default config

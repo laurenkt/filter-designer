@@ -24,5 +24,5 @@ declare var AudioWorkletProcessor: {
 
 declare function registerProcessor(
     name: string,
-    processor: AudioWorkletProcessor
+    processor: typeof AudioWorkletProcessor
 ): void

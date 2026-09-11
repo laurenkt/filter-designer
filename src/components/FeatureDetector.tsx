@@ -41,26 +41,53 @@ interface Props {
     children: JSX.Element
 }
 
-const features = [
-    {
-        friendlyName: "Audio Worklet",
-        available: isAudioWorkletInBaseAudioContext(),
-    },
-    //{ friendlyName: "Web Worker", available: !!("Worker" in window) },
-    /*{
-        friendlyName: "Offscreen Canvas",
-        available: !!("OffscreenCanvas" in window),
-    },*/
-    {
-        friendlyName: "SharedArrayBuffer",
-        available: !!("SharedArrayBuffer" in window),
-    },
-    { friendlyName: "WebGL", available: detectWebGLContext() },
-]
+function detectSharedArrayBuffer() {
+    try {
+        // Try to create a SharedArrayBuffer
+        if (typeof SharedArrayBuffer !== 'undefined') {
+            const sab = new SharedArrayBuffer(1);
+            return sab.byteLength === 1;
+        }
+    } catch (e) {
+        // If creation fails, it's not available
+    }
+    return false;
+}
 
 export default class extends React.PureComponent<Props> {
+    state = {
+        featuresChecked: false,
+        features: [] as Feature[]
+    }
+
+    componentDidMount() {
+        // Check features at runtime after component mounts
+        const features = [
+            {
+                friendlyName: "Audio Worklet",
+                available: isAudioWorkletInBaseAudioContext(),
+            },
+            {
+                friendlyName: "SharedArrayBuffer",
+                available: detectSharedArrayBuffer(),
+                description: "Requires HTTPS and COOP/COEP headers"
+            },
+            { 
+                friendlyName: "WebGL", 
+                available: detectWebGLContext() 
+            },
+        ];
+        
+        this.setState({ features, featuresChecked: true });
+    }
+
     render() {
         const { children, fallback } = this.props
+        const { features, featuresChecked } = this.state
+
+        if (!featuresChecked) {
+            return <div>Checking browser features...</div>
+        }
 
         if (features.every(f => f.available)) {
             return children
